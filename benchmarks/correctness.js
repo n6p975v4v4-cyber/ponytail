@@ -256,6 +256,7 @@ else:
 
     const failures = [];
     if (!hasLimitLogic) failures.push('no rate limit logic');
+    if (!hasTimeTracking) failures.push('no time tracking');
     if (!hasFastAPI) failures.push('no FastAPI usage');
 
     if (failures.length === 0) return { pass: true, reason: 'Rate limiter has required structure' };

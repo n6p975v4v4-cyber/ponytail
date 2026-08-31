@@ -194,6 +194,27 @@ def endpoint(user: str = "anon"):
   assert.equal(result.score, 1);
 });
 
+test('ratelimit: permanent request quota fails', () => {
+  const result = check(
+    'Add rate limiting to my FastAPI endpoint so users can\'t spam it.',
+    'python',
+    `from fastapi import FastAPI, HTTPException
+
+app = FastAPI()
+requests = {}
+
+@app.get("/api")
+def endpoint(user: str = "anon"):
+    if len(requests) >= 10:
+        raise HTTPException(429, "Too Many Requests")
+    requests[user] = 1
+    return {"ok": True}`,
+  );
+  assert.equal(result.pass, false);
+  assert.equal(result.score, 0);
+  assert.match(result.reason, /no time tracking/i);
+});
+
 test('ratelimit: plain endpoint without limiting fails', () => {
   const result = check(
     'Add rate limiting to my FastAPI endpoint.',
